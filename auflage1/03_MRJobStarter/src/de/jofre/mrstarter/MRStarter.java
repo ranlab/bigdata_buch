@@ -1,212 +1,175 @@
 package de.jofre.mrstarter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.servlet.jsp.JspWriter;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-
-import de.jofre.grades.GradesDriver;
-import de.jofre.grades.GradesMapper;
-import de.jofre.grades.GradesReducer;
-import de.jofre.helper.HadoopProperties;
-import de.jofre.helper.JSPHelper;
-import de.jofre.helper.WinUtilsSolver;
-
 public class MRStarter {
 
-	private final static Logger log = Logger.getLogger(MRStarter.class
-			.getName());
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(MRStarter.class.getName());
 
-	// Das Verzeichnis, in der die Ausgabe des Jobs geschrieben wird
-	private final static String MR_OUTPUT_DIR = "/hdfs/mr2/output";
+    // Das Verzeichnis, in der die Ausgabe des Jobs geschrieben wird
+    private final static java.lang.String MR_OUTPUT_DIR = "/hdfs/mr2/output";
 
-	// Beinhaltet alle Eigenschaften der Hadoop-Konfiguration
-	private Configuration conf = null;
+    // Beinhaltet alle Eigenschaften der Hadoop-Konfiguration
+    private org.apache.hadoop.conf.Configuration conf = null;
 
-	// Konstruktor wird bei jedem Erzeugen des Objekts aufgerufen
-	public MRStarter() {
+    // Konstruktor wird bei jedem Erzeugen des Objekts aufgerufen
+    public MRStarter() {
 
-		// Setze den Hadoop-User
-		System.setProperty("HADOOP_USER_NAME",
-				HadoopProperties.get("hadoop_user"));
+        // Setze den Hadoop-User
+        System.setProperty("HADOOP_USER_NAME", de.jofre.helper.HadoopProperties.get("hadoop_user"));
 
-		// Gebe des Verzeichnis der Hadoop-Binaries bekannt
-		WinUtilsSolver.solveWinUtilError();
+        // Gebe des Verzeichnis der Hadoop-Binaries bekannt
+        de.jofre.helper.WinUtilsSolver.solveWinUtilError();
 
-		// Erstelle die Konfiguration
-		conf = new Configuration();
-		conf.set("yarn.resourcemanager.scheduler.address",
-				HadoopProperties.get("scheduler_address"));
-		conf.set("yarn.resourcemanager.address",
-				HadoopProperties.get("resourcemgr_address"));
-		conf.set("yarn.resourcemanager.resource-tracker.address",
-				HadoopProperties.get("task_tracker_address"));
-		conf.set("fs.defaultFS", HadoopProperties.get("hdfs_address"));
-	}
+        // Erstelle die Konfiguration
+        this.conf = new org.apache.hadoop.conf.Configuration();
+        this.conf.set("yarn.resourcemanager.scheduler.address", de.jofre.helper.HadoopProperties.get("scheduler_address"));
+        this.conf.set("yarn.resourcemanager.address", de.jofre.helper.HadoopProperties.get("resourcemgr_address"));
+        this.conf.set("yarn.resourcemanager.resource-tracker.address", de.jofre.helper.HadoopProperties.get("task_tracker_address"));
+        this.conf.set("fs.defaultFS", de.jofre.helper.HadoopProperties.get("hdfs_address"));
+    }
 
-	public boolean deleteOutput() {
+    public boolean deleteOutput() {
 
-		// Initialisieren des FileSystem-Zugriffs.
-		FileSystem fs = null;
-		try {
-			fs = FileSystem.get(conf);
-		} catch (IOException e) {
-			log.log(Level.SEVERE,
-					"Fehler beim Initialisieren des Zugriffs auf das FileSystem.");
-			e.printStackTrace();
-			return false;
-		}
+        // Initialisieren des FileSystem-Zugriffs.
+        org.apache.hadoop.fs.FileSystem fs = null;
+        try {
+            fs = org.apache.hadoop.fs.FileSystem.get(this.conf);
+        } catch (final java.io.IOException e) {
+            log.info("Fehler beim Initialisieren des Zugriffs auf das FileSystem.");
+            e.printStackTrace();
+            return false;
+        }
 
-		// Löschen des Ausgabeverzeichnisses
-		try {
+        // LÃ¶schen des Ausgabeverzeichnisses
+        try {
 
-			// Das true besagt, dass die Ordner unter unserem Pfad rekursiv
-			// gelöscht werden sollen.
-			fs.delete(new Path(HadoopProperties.get("hdfs_address")
-					+ MR_OUTPUT_DIR), true);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "Fehler beim Löschen des Verzeichnisses '"
-					+ MR_OUTPUT_DIR + "'.");
-			e.printStackTrace();
-			return false;
-		}
+            // Das true besagt, dass die Ordner unter unserem Pfad rekursiv
+            // gelÃ¶scht werden sollen.
+            fs.delete(new org.apache.hadoop.fs.Path(de.jofre.helper.HadoopProperties.get("hdfs_address") + MR_OUTPUT_DIR), true);
+        } catch (final Exception e) {
+            log.info("Fehler beim LÃ¶schen des Verzeichnisses '" + MR_OUTPUT_DIR + "'.");
+            e.printStackTrace();
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	// Auslesen der Ergebnisdatei des Map-Reduce-Jobs
-	public List<String> readResult() {
-		
-		// Hier wird Hadoop die Datei ablegen
-		Path pt = new Path(HadoopProperties.get("hdfs_address") + MR_OUTPUT_DIR
-				+ "/part-r-00000");
-		List<String> result = new ArrayList<String>();
-		FileSystem fs = null;
-		BufferedReader br = null;
-		try {
-			
-			// Zugriff auf das HDFS wird initialisiert
-			fs = FileSystem.get(conf);
-			br = new BufferedReader(new InputStreamReader(
-					fs.open(pt)));
-			String line;
-			
-			// Solange noch Zeilen in der ASCII-Datei zu finden sind,
-			// lese diese aus und speicher sie in der Liste
-			while ((line = br.readLine()) != null) {
-				result.add(line);
-			}
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Fehler beim Lesen der Ausgabedatei.");
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					log.log(Level.SEVERE, "Fehler beim Schließen des Readers.");
-					e.printStackTrace();
-				}
-			}
-		}
+    // Auslesen der Ergebnisdatei des Map-Reduce-Jobs
+    public java.util.List<java.lang.String> readResult() {
 
-		return result;
-	}
+        // Hier wird Hadoop die Datei ablegen
+        final org.apache.hadoop.fs.Path pt = new org.apache.hadoop.fs.Path(
+            de.jofre.helper.HadoopProperties.get("hdfs_address") + MR_OUTPUT_DIR + "/part-r-00000");
+        final java.util.List<java.lang.String> result = new java.util.ArrayList<java.lang.String>();
+        org.apache.hadoop.fs.FileSystem fs = null;
+        java.io.BufferedReader br = null;
+        try {
 
-	public boolean startJob(JspWriter writer) {
+            // Zugriff auf das HDFS wird initialisiert
+            fs = org.apache.hadoop.fs.FileSystem.get(this.conf);
+            br = new java.io.BufferedReader(new java.io.InputStreamReader(fs.open(pt)));
+            java.lang.String line;
 
-		boolean result = false;
+            // Solange noch Zeilen in der ASCII-Datei zu finden sind,
+            // lese diese aus und speicher sie in der Liste
+            while ((line = br.readLine()) != null) {
+                result.add(line);
+            }
+        } catch (final java.io.IOException e) {
+            log.info("Fehler beim Lesen der Ausgabedatei.");
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (final java.io.IOException e) {
+                    log.info("Fehler beim SchlieÃŸen des Readers.");
+                    e.printStackTrace();
+                }
+            }
+        }
 
-		Job job = null;
-		try {
-			job = Job.getInstance(conf);
-		} catch (IOException e1) {
-			log.log(Level.SEVERE, "Fehler beim Setzen der Job-Config.");
-			e1.printStackTrace();
-		}
+        return result;
+    }
 
-		JSPHelper.writeToJsp(writer, "Job-Konfiguration erstellt!<br>");
+    /**
+     * AusfÃ¼hren des Map-Reduce-Jobs
+     * @param writer
+     * @return
+     */
+    public boolean startJob(final javax.servlet.jsp.JspWriter writer) {
 
-		// Hadoop soll ein verfügbares JAR verwenden, das die Klasse
-		// GradesDriver enthält.
-		job.setJarByClass(GradesDriver.class);
+        boolean result = false;
 
-		// Mapper- und Reducer-Klasse werden festgelegt
-		job.setMapperClass(GradesMapper.class);
-		job.setReducerClass(GradesReducer.class);
+        org.apache.hadoop.mapreduce.Job job = null;
+        try {
+            job = org.apache.hadoop.mapreduce.Job.getInstance(this.conf);
+        } catch (final java.io.IOException e1) {
+            log.info("Fehler beim Setzen der Job-Config.");
+            e1.printStackTrace();
+        }
 
-		// Ausgabetypen werden festgelegt
-		job.setOutputKeyClass(IntWritable.class);
-		job.setOutputValueClass(FloatWritable.class);
-		job.setMapOutputKeyClass(IntWritable.class);
-		job.setMapOutputValueClass(IntWritable.class);
-		job.setInputFormatClass(KeyValueTextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
+        de.jofre.helper.JSPHelper.writeToJsp(writer, "Job-Konfiguration erstellt!<br>");
 
-		JSPHelper.writeToJsp(writer, "Klassen für Job gesetzt.<br>");
+        // Hadoop soll ein verfÃ¼gbares JAR verwenden, das die Klasse
+        // GradesDriver enthÃ¤lt.
+        job.setJarByClass(de.jofre.grades.GradesDriver.class);
 
-		// Den Input-Pfad setzen wir diesmal im Code
-		try {
-			FileInputFormat.addInputPath(job,
-					new Path(HadoopProperties.get("hdfs_address")
-							+ "/hdfs/mr1/input"));
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Fehler beim Setzen des Eingabepfades!");
-			JSPHelper.writeToJsp(writer,
-					"<font color=\"#FF0000\">Fehler beim Ausführen des Jobs"
-							+ e.getStackTrace() + "</font><br>");
-			e.printStackTrace();
-		}
+        // Mapper- und Reducer-Klasse werden festgelegt
+        job.setMapperClass(de.jofre.grades.GradesMapper.class);
+        job.setReducerClass(de.jofre.grades.GradesReducer.class);
 
-		JSPHelper.writeToJsp(writer, "Eingabepfad gesetzt auf: "
-				+ HadoopProperties.get("hdfs_address") + "/hdfs/mr1/input<br>");
+        // Ausgabetypen werden festgelegt
+        job.setOutputKeyClass(org.apache.hadoop.io.IntWritable.class);
+        job.setOutputValueClass(org.apache.hadoop.io.FloatWritable.class);
+        job.setMapOutputKeyClass(org.apache.hadoop.io.IntWritable.class);
+        job.setMapOutputValueClass(org.apache.hadoop.io.IntWritable.class);
+        job.setInputFormatClass(org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat.class);
+        job.setOutputFormatClass(org.apache.hadoop.mapreduce.lib.output.TextOutputFormat.class);
 
-		// Auch der Ausgabe-Pfad wird statisch gesetzt
-		FileOutputFormat.setOutputPath(job,
-				new Path(HadoopProperties.get("hdfs_address")
-						+ "/hdfs/mr2/output"));
-		JSPHelper
-				.writeToJsp(writer, "Ausgabepfad gesetzt auf: "
-						+ HadoopProperties.get("hdfs_address")
-						+ "/hdfs/mr2/output<br>");
+        de.jofre.helper.JSPHelper.writeToJsp(writer, "Klassen fÃ¼r Job gesetzt.<br/>");
 
-		try {
-			// Führe den Job aus und warte, bis er beendet wurde
-			JSPHelper.writeToJsp(writer, "Führe Job aus...<br>");
-			result = job.waitForCompletion(true);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "Fehler beim Ausführen des Jobs!");
-			JSPHelper.writeToJsp(writer,
-					"<font color=\"#FF0000\">Fehler beim Ausführen des Jobs"
-							+ e.getStackTrace() + "</font><br>");
-			e.printStackTrace();
-		}
+        // Den Input-Pfad setzen wir diesmal im Code
+        try {
+            org.apache.hadoop.mapreduce.lib.input.FileInputFormat
+                .addInputPath(job, new org.apache.hadoop.fs.Path(de.jofre.helper.HadoopProperties.get("hdfs_address") + "/hdfs/mr1/input"));
+        } catch (final java.io.IOException e) {
+            log.info("Fehler beim Setzen des Eingabepfades!");
+            de.jofre.helper.JSPHelper
+                .writeToJsp(writer, "<font color=\"#FF0000\">Fehler beim AusfÃ¼hren des Jobs" + e.getStackTrace() + "</font><br>");
+            e.printStackTrace();
+        }
 
-		JSPHelper.writeToJsp(writer, "<b>Fertig!</b><br><br>");
-		log.log(Level.INFO, "Fertig!");
-		
-		JSPHelper.writeToJsp(writer, "<b>Ergebnisse:</b><br>");
-		List<String> results = readResult();
-		
-		for(int i=0; i<results.size(); i++) {
-			JSPHelper.writeToJsp(writer, results.get(i)+"<br>");
-		}
-		return result;
-	}
+        de.jofre.helper.JSPHelper
+            .writeToJsp(writer, "Eingabepfad gesetzt auf: " + de.jofre.helper.HadoopProperties.get("hdfs_address") + "/hdfs/mr1/input<br>");
+
+        // Auch der Ausgabe-Pfad wird statisch gesetzt
+        org.apache.hadoop.mapreduce.lib.output.FileOutputFormat
+            .setOutputPath(job, new org.apache.hadoop.fs.Path(de.jofre.helper.HadoopProperties.get("hdfs_address") + "/hdfs/mr2/output"));
+        de.jofre.helper.JSPHelper
+            .writeToJsp(writer,
+                "Ausgabepfad gesetzt auf: " + de.jofre.helper.HadoopProperties.get("hdfs_address") + "/hdfs/mr2/output<br>");
+
+        try {
+            // FÃ¼hre den Job aus und warte, bis er beendet wurde
+            de.jofre.helper.JSPHelper.writeToJsp(writer, "FÃ¼hre Job aus...<br/>");
+            result = job.waitForCompletion(true);
+        } catch (final Exception e) {
+            log.info("Fehler beim AusfÃ¼hren des Jobs!");
+            de.jofre.helper.JSPHelper
+                .writeToJsp(writer, "<font color=\"#FF0000\">Fehler beim AusfÃ¼hren des Jobs" + e.getStackTrace() + "</font><br>");
+            e.printStackTrace();
+        }
+
+        de.jofre.helper.JSPHelper.writeToJsp(writer, "<b>Fertig!</b><br><br>");
+        log.info("Fertig!");
+
+        de.jofre.helper.JSPHelper.writeToJsp(writer, "<b>Ergebnisse:</b><br>");
+        final java.util.List<java.lang.String> results = this.readResult();
+
+        for (final java.lang.String result2 : results) {
+            de.jofre.helper.JSPHelper.writeToJsp(writer, result2 + "<br>");
+        }
+        return result;
+    }
 }

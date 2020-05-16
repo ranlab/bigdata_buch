@@ -1,0 +1,12 @@
+= Starten eines Jobs via Hadoop-API =
+:author: Rüdiger Andrae 
+:email: <ruediger.andrae@googlemail.com>
+:revnumber: 0.1
+:revdate: 2020-05-10
+:revremark: Nachstellen Test
+
+In dem <<BigDataBuch>> ab Seite 86 wird der Mep-Reduce-Job via Hadoop-API gestartet.
+
+
+[[BigDataBuch]]
+BIG Data in der Praxis, ISBN 978-3-446-45396-8

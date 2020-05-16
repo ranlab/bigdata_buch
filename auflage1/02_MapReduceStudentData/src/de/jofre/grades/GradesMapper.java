@@ -1,36 +1,40 @@
 package de.jofre.grades;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+/**
+ * Mapper zur Notenauswertung.
+ *
+ * Verarbeitet die Textdatei zeilenweise und liest Jahr und Note in eine Hashtable aus
+ * Schl√ºssel-Wert-Paaren (Eintrag pro Jahr Note).
+ *
+ * @see Big Data Buch, Seite 61
+ *
+ * @author promyx
+ */
+public class GradesMapper extends
+    org.apache.hadoop.mapreduce.Mapper<org.apache.hadoop.io.Text, org.apache.hadoop.io.Text, org.apache.hadoop.io.IntWritable, org.apache.hadoop.io.IntWritable> {
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+    private final static java.util.logging.Logger log = java.util.logging.Logger.getLogger(GradesMapper.class.getName());
 
-// Eingabe-Key, Eingabe-Wert, Ausgabe-Key, Ausgabe-Wert
-public class GradesMapper extends Mapper<Text,Text,IntWritable,IntWritable> {
-	
-	private final static Logger log = Logger.getLogger(GradesMapper.class.getName());
-	
-	private IntWritable year_int = null;
-	private IntWritable grade_int = null;
+    private org.apache.hadoop.io.IntWritable year_int = null;
+    private org.apache.hadoop.io.IntWritable grade_int = null;
 
-	public void map(Text key, Text value, Context context) throws IOException,
-			InterruptedException {
-		
-		// Auslesen des Jahres und der Note aus einem String wie "2853972308201319"
-		if (key.toString().length() == 16) {
-			String year_str = key.toString().substring(10,14);
-			String grade_str = key.toString().substring(14,16);
-			
-			year_int = new IntWritable(Integer.parseInt(year_str));
-			grade_int = new IntWritable(Integer.parseInt(grade_str));
-			
-			// Sammeln der Ergebnisse
-			context.write(year_int, grade_int);
-		} else {
-			log.log(Level.INFO, "Ung¸ltige Datensatzl‰nge entdeckt ("+key.toString().length()+").");
-		}
-	}
+    @Override
+    public void map(final org.apache.hadoop.io.Text key, final org.apache.hadoop.io.Text value, final Context context)
+        throws java.io.IOException,
+            java.lang.InterruptedException {
+
+        // Auslesen des Jahres und der Note aus einem String wie "2853972308201319"
+        if (key.toString().length() == 16) {
+            final java.lang.String year_str = key.toString().substring(10, 14);
+            final java.lang.String grade_str = key.toString().substring(14, 16);
+
+            this.year_int = new org.apache.hadoop.io.IntWritable(java.lang.Integer.parseInt(year_str));
+            this.grade_int = new org.apache.hadoop.io.IntWritable(java.lang.Integer.parseInt(grade_str));
+
+            // Sammeln der Ergebnisse
+            context.write(this.year_int, this.grade_int);
+        } else {
+            log.log(java.util.logging.Level.INFO, "Ung√ºltige Datensatzl√§nge entdeckt (" + key.toString().length() + ").");
+        }
+    }
 }

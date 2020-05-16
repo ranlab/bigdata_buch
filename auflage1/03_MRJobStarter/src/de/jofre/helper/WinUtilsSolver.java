@@ -1,74 +1,67 @@
 package de.jofre.helper;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class WinUtilsSolver {
-	private final static Logger log = Logger.getLogger(WinUtilsSolver.class
-			.getName());
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager
+        .getLogger(WinUtilsSolver.class.getName());
 
-	/**
-	 * Überprüft, ob die Datei winutils.exe existiert. Wenn nicht, wird
-	 * eine leere Datei angelegt, um einen Teil der Funktionalität der HDFS-API
-	 * zu gewährleisten.
-	 */
-	public static void solveWinUtilError() {
-		
-		// Erfrage, ob die Systemeigenschaft hadoop.home.dir gesetzt ist
-		if (System.getProperty("hadoop.home.dir") != null) {
+    /**
+     * ÃœberprÃ¼ft, ob die Datei winutils.exe existiert. Wenn nicht, wird
+     * eine leere Datei angelegt, um einen Teil der FunktionalitÃ¤t der HDFS-API
+     * zu gewÃ¤hrleisten.
+     */
+    public static void solveWinUtilError() {
 
-			String hDir = System.getProperty("hadoop.home.dir");
-			if (!hDir.endsWith("\\"))
-				hDir = hDir += "\\";
+        // Erfrage, ob die Systemeigenschaft hadoop.home.dir gesetzt ist
+        if (System.getProperty("hadoop.home.dir") != null) {
 
-			// Wenn ja, überprüfe ob darin ein Ordner "bin" existiert und
-			// darin eine Datei "winutils.exe" liegt.
-			File winUtilsPath = new File(hDir + "bin\\winutils.exe");
-			if (winUtilsPath.exists()) {
+            String hDir = System.getProperty("hadoop.home.dir");
+            if (!hDir.endsWith("\\")) {
+                hDir = hDir += "\\";
+            }
 
-				log.log(Level.INFO,
-						"winutils.exe in "+winUtilsPath.getAbsolutePath()+" gefunden, Workaround nicht nötig.");
-				return;
-			} else {
-				log.log(Level.WARNING, "hadoop.home.dir ist zwar gesetzt, jedoch wurden keine Binaries gefunden.");
-			}
-		}
+            // Wenn ja, Ã¼berprÃ¼fe ob darin ein Ordner "bin" existiert und
+            // darin eine Datei "winutils.exe" liegt.
+            final java.io.File winUtilsPath = new java.io.File(hDir + "bin\\winutils.exe");
+            if (winUtilsPath.exists()) {
 
-		// Existieren die Binaries denn?
-		File binaries = new File("E:\\hadoop-2.2.0\\bin\\winutils.exe");
-		if (binaries.exists()) {
-			
-			// ... dann verlinke sie
-			System.getProperties().put("hadoop.home.dir", "E:\\hadoop-2.2.0\\");
-		} else {
-			
-			// Existieren sie nicht, simuliere sie
-			log.log(Level.INFO, "Wende WinUtils-Workaround an...");
+                log.info("winutils.exe in " + winUtilsPath.getAbsolutePath() + " gefunden, Workaround nicht nÃ¶tig.");
+                return;
+            } else {
+                log.warn("hadoop.home.dir ist zwar gesetzt, jedoch wurden keine Binaries gefunden.");
+            }
+        }
 
-			// Erstelle eine Datei im aktuellen Ordner (in unserem Fall dem
-			// Root-Ordner
-			// von Eclipse)
-			File workaround = new File("E:\\hadoop-2.2.0\\");
+        // Existieren die Binaries denn?
+        final java.io.File binaries = new java.io.File("E:\\hadoop-2.2.0\\bin\\winutils.exe");
+        if (binaries.exists()) {
 
-			// Erstelle die Systemeigenschaft hadoop.home.dir und setze deren
-			// Wert
-			// auf den eben erstellten Ordner.
-			System.getProperties().put("hadoop.home.dir",
-					workaround.getAbsolutePath());
+            // ... dann verlinke sie
+            System.getProperties().put("hadoop.home.dir", "E:\\hadoop-2.2.0\\");
+        } else {
 
-			// Erstelle in diesem Ordner den Ordner "bin" ...
-			new File("./bin").mkdirs();
-			try {
+            // Existieren sie nicht, simuliere sie
+            log.info("Wende WinUtils-Workaround an...");
 
-				// ... und darin eine leere Datei "winutils.exe"
-				new File("E:\\hadoop-2.2.0\\bin\\winutils.exe").createNewFile();
-			} catch (IOException e) {
-				log.log(Level.SEVERE,
-						"Fehler beim Erstellen der Datei './bin/winutils.exe'.");
-				e.printStackTrace();
-			}
-		}
-	}
+            // Erstelle eine Datei im aktuellen Ordner (in unserem Fall dem
+            // Root-Ordner
+            // von Eclipse)
+            final java.io.File workaround = new java.io.File("E:\\hadoop-2.2.0\\");
+
+            // Erstelle die Systemeigenschaft hadoop.home.dir und setze deren
+            // Wert
+            // auf den eben erstellten Ordner.
+            System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());
+
+            // Erstelle in diesem Ordner den Ordner "bin" ...
+            new java.io.File("./bin").mkdirs();
+            try {
+
+                // ... und darin eine leere Datei "winutils.exe"
+                new java.io.File("E:\\hadoop-2.2.0\\bin\\winutils.exe").createNewFile();
+            } catch (final java.io.IOException e) {
+                log.error("Fehler beim Erstellen der Datei './bin/winutils.exe'.");
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -1,44 +1,44 @@
 package de.jofre.helper;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+/**
+ * Platzhalter für die hadoop.properties Datei.
+ * @author promyx
+ *
+ */
 public class HadoopProperties {
 
-	private static Properties prop = null;
-	private final static Logger log = Logger.getLogger(HadoopProperties.class
-			.getName());
-	
-	/**
-	 * Klasse wird einmalig initialisiert
-	 */
-	private static void initProps() {
-		prop = new Properties();
-		try {
-			
-			// Lesen der Datei aus dem ClassPath WebContent/WEB-INF/classes/
-			prop.load(HadoopProperties.class.getClassLoader().getResourceAsStream("hadoop.properties"));
-		} catch (IOException e) {
-			log.log(Level.SEVERE, "Konnte Properties-Datei nicht laden!");
-			e.printStackTrace();
-		}
-	}
-	
+    private static java.util.Properties prop = null;
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager
+        .getLogger(HadoopProperties.class.getName());
 
-	/**
-	 * Zugriff auf eine Eigenschaft in der hadoop.properties
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public static String get(String key) {
-		if (prop == null) initProps();
-		String property = prop.getProperty(key);
-		if (property == null) {
-			log.log(Level.SEVERE, "Property '"+key+"' konnte nicht gefunden werden!");
-		}
-		return property;
-	}
+    /**
+     * Klasse wird einmalig initialisiert
+     */
+    private static void initProps() {
+        prop = new java.util.Properties();
+        try {
+            // Lesen der Datei aus dem ClassPath WebContent/WEB-INF/classes/
+            prop.load(HadoopProperties.class.getClassLoader().getResourceAsStream("hadoop.properties"));
+        } catch (final java.io.IOException e) {
+            log.info("Konnte Properties-Datei nicht laden!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Zugriff auf eine Eigenschaft in der hadoop.properties
+     *
+     * @param key
+     * @return
+     */
+    public static java.lang.String get(final java.lang.String key) {
+        if (prop == null) {
+            initProps();
+        }
+        final java.lang.String property = prop.getProperty(key);
+        if (property == null) {
+            log.info("Property '" + key + "' konnte nicht gefunden werden!");
+        }
+        return property;
+    }
 }
