@@ -1,0 +1,73 @@
+= Starten eines Jobs via Hadoop-API =
+:author: Rüdiger Andrae 
+:email: <ruediger.andrae@googlemail.com>
+:revnumber: 0.1
+:revdate: 2020-05-17
+:revremark: Nachstellen Test
+
+In dem <<BigDataBuch>> ab Seite 86 wird der Mep-Reduce-Job via Hadoop-API gestartet.
+
+== Vorbereitung ==
+
+* Map-Reduce-Job, der gestartet werden soll, muss in das WEB-INF/lib Verzeichnis als Jar.
+* Einstellungen in *hadoop.properties* an die VM anpassen
+
+.Anlage Verzeichnisse im HDFS und Kopie der Verarbeitungsdaten
+[source,shell]
+----
+hdfs dfs -mkdir -p /hdfs/mr1/input
+hdfs dfs -copyFromLocal ./mr_student_data.txt /hdfs/mr1/input
+
+hdfs dfs -ls /hdfs/mr1/input <1>
+
+hadoop jar 02_MapReduceStudentData.jar /hdfs/mr1/input /hdfs/mr1/output <2>
+----
+<1> Kontrolle, ob die Daten auch da liegen
+<2> Start des Jobs vom Hadoop-Master-Knoten zum Test (das Jar liegt im Aufrufverzeichnis), Seite 83
+
+
+== Start ==
+
+Durch eine JSP-Seite wird der Starter aufgerufen. 
+Verteilung des Projekts auf einen konfigurierten Server im Eclipse und starten.
+
+Dann das link:http://localhost:8080/03_MRJobStarter/[Ergebnis im Brwoser] betrachten.
+
+
+== Fehler beim Starten ==
+
+[source,shell]
+----
+systemctl status firewalld // <1>
+
+firewall-cmd --zone=public --list-all // <2>
+
+firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --zone=public --add-port=8080/tcp --add-port=9990/tcp --permanent
+firewall-cmd --add-port=3306/tcp --permanent
+
+firewall-cmd --zone=public --add-port=8030/tcp --permanent <3>
+firewall-cmd --zone=public --add-port=8031/tcp --permanent <4>
+firewall-cmd --zone=public --add-port=8032/tcp --permanent <5>
+
+firewall-cmd --zone=public --add-port=9000/tcp --permanent <6>
+ 
+firewall-cmd --reload
+
+----
+<1> Statusabfrage des Dienstes
+<2> Anzeige der eingestellten Ports
+<3> Port für Scheduler
+<4> Port für Tasktracker
+<5> Port für Resourcemanager
+<6> Port für HDFS-Cluster
+
+
+== Ergebniskontrolle ==
+
+* link:http://192.168.1.122:8088/cluster/nodes[Hadoop Cluster]
+* link:http://192.168.1.122:8088/cluster/apps[Hadoop Jobfortschritt]
+
+
+[[BigDataBuch]]
+BIG Data in der Praxis, ISBN 978-3-446-45396-8

@@ -23,8 +23,11 @@
 		<hadoop-client.version>3.2.1</hadoop-client.version>
 
 		<log4j.version>2.13.2</log4j.version>
-		<junit.version>4.13</junit.version>
+		<junit-jupiter.version>5.6.2</junit-jupiter.version>
 
+		<asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
+		<asciidoctorj.version>2.2.0</asciidoctorj.version>
+		<jruby.version>9.2.11.1</jruby.version>
 	</properties>
 
 	<dependencyManagement>
@@ -67,8 +70,27 @@
 				<version>${hadoop-client.version}</version>
 			</dependency>
 
+			<!-- Junit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit-jupiter.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>${junit-jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-params</artifactId>
+				<version>${junit-jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
 
-			<!-- Variante: log4j2 -->
+
+			<!-- Variante: log4j2, der log4j-1.2-api ist für altes log4j -->
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-api</artifactId>
@@ -77,6 +99,16 @@
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-1.2-api</artifactId>
 				<version>${log4j.version}</version>
 			</dependency>
 		</dependencies>

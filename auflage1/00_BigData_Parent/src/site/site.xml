@@ -1,0 +1,16 @@
+<project>
+    <body>
+        <menu ref="reports" inherit="top"/>
+        <menu ref="modules"/> 
+        <menu name="Big Data Buch">
+            <item href="00_BigDataBuch.html" name="00_BigDataBuch" />
+            <item href="01_MapReduceJob.html" name="01_MapReduceJob" />
+            <item href="02_HadoopAPI.html" name="02_HadoopAPI" />
+        </menu>    
+    </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.7</version>
+    </skin>
+</project>

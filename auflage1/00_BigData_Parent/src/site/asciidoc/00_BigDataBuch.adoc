@@ -1,0 +1,25 @@
+= Big Data Buch =
+:author: Rüdiger Andrae 
+:email: <ruediger.andrae@googlemail.com>
+:revnumber: 0.1
+:revdate: 2020-05-17
+:revremark: Erstanlage für Beispiele aus Buch
+:toc: 
+:toclevels: 4                                                       
+:toc-title: Inhaltsverzeichnis
+:icons: font
+:doctype: article
+ifndef::imagesdir[:imagesdir: images]
+:sectnums:
+:sectnumlevels: 3 
+
+In diesem Projekt werden die Beispiele aus dem Buch <<BigDataBuch>> durchgearbeitet. Das GitHub-Repository wurde geforkt
+und so um weitere Sachen ergänzt.
+
+Die Installation wird in dem Projekt *<<ScientiaBigdata>>* beschrieben.
+
+[[BigDataBuch]]
+Big Data in der Praxis, ISBN 978-3-446-45396-8
+
+[[ScientiaBigdata]]
+Git-Location de.ranlab.scientia:de.ranlab.bigdata:1.1

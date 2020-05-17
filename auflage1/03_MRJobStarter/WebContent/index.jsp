@@ -11,7 +11,7 @@
 <body>
 
 	<%
-		out.println("Initialisiere Job-Starter...<br>");
+		out.println("Initialisiere Job-Starter...<br/>");
 			MRStarter mrstarter = new MRStarter();
 			out.println("Erledigt!<br><br>");
 			if (mrstarter.deleteOutput()) {

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+
+		<!-- OPTION#1: Schreibe in ein Verzeichnis mit Rolling-File -->
+		<RollingFile name="rollingFile"
+			fileName="target/applog/testlog4j.log"
+			filePattern="target/applog/$${date:yyyy-MM}/testlog4j-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} [%t] %-5level %36logger{1.} %M
+					%X{loginId,
+					requestId} - %msg%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+		</RollingFile>
+
+		<!-- OPTION#2: Schreibe in ein Verzeichnis mit Rolling-File im Json -->
+		<RollingFile name="jsonRollingFile"
+			fileName="target/applog/jsonTestlog4j.log"
+			filePattern="target/applog/$${date:yyyy-MM}/jsonTestlog4j-%d{MM-dd-yyyy}-%i.log.gz">
+			<JsonLayout charset="UTF-8" compact="true" eventEol="true">
+				<KeyValuePair key="timestamp"
+					value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSZ}" />
+				<KeyValuePair key="appName" value="testlog4j" />
+				<KeyValuePair key="loginId" value="$${ctx:loginId}" />
+				<KeyValuePair key="requestId" value="$${ctx:requestId}" />
+				<KeyValuePair key="method" value="$${ctx:method}" />
+			</JsonLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+		</RollingFile>
+
+
+	</Appenders>
+
+	<Loggers>
+		<Root level="debug">
+			<AppenderRef ref="console" />
+			<!-- <AppenderRef ref="rollingFile" /> -->
+			<!-- <AppenderRef ref="jsonRollingFile" /> -->
+		</Root>
+		<Logger name="audit" level="info" additivity="false">
+			<AppenderRef ref="console" level="info" />
+		</Logger>
+	</Loggers>
+
+</Configuration>
