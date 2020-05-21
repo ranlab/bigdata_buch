@@ -18,11 +18,13 @@ mkdir -p /usr/local/hadoop/input
 cp mr_student_data.txt /usr/local/hadoop/input  // <1>
 cp 02_MapReduceStudentData.jar /usr/local/hadoop
 
-hadoop jar 02_MapReduceStudentData.jar file:/usr/local/hadoop/input file:/usr/local/hadoop/output // <2>
+hadoop jar 02_MapReduceStudentData.jar file:/home/hduser/data/input file:/home/hduser/data/output // <2>
 
+less data/output/part-r-00000 // <3>
 ----
 <1> erzeugte Datendatei aus 01_MRStudentTestDataGenerator
 <2> beim zweiten Lauf das Verzeichnis *output* löschen
+<3> Ergebnis der Verarbeitung
 
 Kontrolle und Ergebnis auf link:http://darwin:8088/cluster/apps[Hadoop Console]
 

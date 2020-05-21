@@ -51,6 +51,7 @@ firewall-cmd --zone=public --add-port=8031/tcp --permanent <4>
 firewall-cmd --zone=public --add-port=8032/tcp --permanent <5>
 
 firewall-cmd --zone=public --add-port=9000/tcp --permanent <6>
+firewall-cmd --zone=public --add-port=9870/tcp --add-port=50070/tcp --permanent <7>
  
 firewall-cmd --reload
 
@@ -61,6 +62,7 @@ firewall-cmd --reload
 <4> Port für Tasktracker
 <5> Port für Resourcemanager
 <6> Port für HDFS-Cluster
+<7> HDFS-Cluster
 
 
 == Ergebniskontrolle ==

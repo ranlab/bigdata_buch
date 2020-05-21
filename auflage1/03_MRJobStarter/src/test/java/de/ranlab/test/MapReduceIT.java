@@ -30,6 +30,8 @@ public class MapReduceIT {
         conf.set("yarn.resourcemanager.address", de.jofre.helper.HadoopProperties.get("resourcemgr_address"));
         conf.set("yarn.resourcemanager.resource-tracker.address", de.jofre.helper.HadoopProperties.get("task_tracker_address"));
         conf.set("fs.defaultFS", de.jofre.helper.HadoopProperties.get("hdfs_address"));
+        //
+        conf.set("mapreduce.framework.name", "yarn");
     }
 
     /**
@@ -38,7 +40,7 @@ public class MapReduceIT {
     @org.junit.jupiter.api.DisplayName("Lösche das Ausgabeverzeichnis")
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.Order(1)
-    public void tesst001_loescheAusgabeverzeichnis() {
+    public void test001_loescheAusgabeverzeichnis() {
         boolean result = false;
 
         // Initialisieren des FileSystem-Zugriffs.
@@ -70,16 +72,17 @@ public class MapReduceIT {
     @org.junit.jupiter.api.DisplayName("Startet den Job")
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.Order(2)
-    public void tesst002_startJob() {
+    public void test002_startJob() {
         org.apache.hadoop.mapreduce.Job job = null;
         try {
-            job = org.apache.hadoop.mapreduce.Job.getInstance(this.conf);
+            job = org.apache.hadoop.mapreduce.Job.getInstance(conf);
         } catch (final java.io.IOException e1) {
             log.info("Fehler beim Setzen der Job-Config.");
             e1.printStackTrace();
         }
 
         log.info("Job definiert.");
+        this.debugConfig();
 
         // Hadoop soll ein verfügbares JAR verwenden, das die Klasse
         // GradesDriver enthält.
@@ -130,4 +133,15 @@ public class MapReduceIT {
         org.junit.jupiter.api.Assertions.assertTrue(result);
     }
 
+    private void debugConfig() {
+        final java.util.TreeMap<java.lang.String, java.lang.String> treeConfig = new java.util.TreeMap<>();
+        for (final java.util.Map.Entry<java.lang.String, java.lang.String> entry : conf) {
+            //           if (entry.getKey().contains("address") || entry.getKey().contains("name")) {
+            treeConfig.put(entry.getKey(), entry.getValue());
+            //         }
+        }
+        for (final java.util.Map.Entry<java.lang.String, java.lang.String> entry : treeConfig.entrySet()) {
+            log.info(java.lang.String.format("%s=%s", entry.getKey(), entry.getValue()));
+        }
+    }
 }
