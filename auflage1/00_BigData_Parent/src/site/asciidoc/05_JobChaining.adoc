@@ -1,0 +1,26 @@
+= Job Chaining =
+:author: Rüdiger Andrae 
+:email: <ruediger.andrae@googlemail.com>
+:revnumber: 0.1
+:revdate: 2020-05-23
+:revremark: Nachstellen Test
+
+In dem <<BigDataBuch>> ab Seite 99 beginnt das Beispiel, wo verschiedene Jobs aneinandergekettet werden.
+
+Die Testdaten werden über das Projekt 04_JobChainingTestDataGenerator erzeugt und dann in das HDFS kopiert.
+
+Das Projekt 05_1_AverageGrade berechnet den Durchschnitt pro Studierenden Seite 101.
+
+Das Projekt 05_2_GenderAverage berechnet den Durchschnitt pro Geschlecht.
+
+[source,shell]
+----
+hdfs dfs -mkdir -p /hdfs/mr3/input
+hdfs dfs -copyFromLocal mr_job_chaining_data.txt /hdfs/mr3/input
+hdfs dfs -ls /hdfs/mr3/input
+----
+
+[[BigDataBuch]]
+BIG Data in der Praxis, ISBN 978-3-446-45396-8
+
+

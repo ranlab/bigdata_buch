@@ -11,6 +11,8 @@ public class HadoopProperties {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager
         .getLogger(HadoopProperties.class.getName());
 
+    public static final java.lang.String HADOOP_USER_KEY = "hadoop_user";
+
     /**
      * Klasse wird einmalig initialisiert
      */
@@ -40,5 +42,9 @@ public class HadoopProperties {
             log.info("Property '" + key + "' konnte nicht gefunden werden!");
         }
         return property;
+    }
+
+    public static java.lang.String getHadoopUser() {
+        return get(HADOOP_USER_KEY);
     }
 }

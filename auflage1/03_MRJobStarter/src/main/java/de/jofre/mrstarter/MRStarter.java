@@ -131,7 +131,7 @@ public class MRStarter {
 
         final java.util.TreeMap<java.lang.String, java.lang.String> treeConfig = new java.util.TreeMap<>();
         for (final java.util.Map.Entry<java.lang.String, java.lang.String> entry : this.conf) {
-            if (entry.getKey().contains("address") || entry.getKey().contains("name")) {
+            if (entry.getKey().contains("address") || entry.getKey().contains("mapreduce.framework.name")) {
                 treeConfig.put(entry.getKey(), entry.getValue());
             }
         }

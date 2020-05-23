@@ -16,14 +16,17 @@ In dem <<BigDataBuch>> ab Seite 86 wird der Mep-Reduce-Job via Hadoop-API gestar
 [source,shell]
 ----
 hdfs dfs -mkdir -p /hdfs/mr1/input
-hdfs dfs -copyFromLocal ./mr_student_data.txt /hdfs/mr1/input
+hdfs dfs -copyFromLocal ./data/input/mr_student_data.txt /hdfs/mr1/input
 
 hdfs dfs -ls /hdfs/mr1/input <1>
 
-hadoop jar 02_MapReduceStudentData.jar /hdfs/mr1/input /hdfs/mr1/output <2>
+hadoop jar 02_MapReduceStudentData.jar /hdfs/mr1/input /hdfs/mr1/output // <2>
+hdfs dfs -ls /hdfs/mr1/output // <3>
+hdfs dfs -tail /hdfs/mr1/output/part-r-00000
 ----
 <1> Kontrolle, ob die Daten auch da liegen
 <2> Start des Jobs vom Hadoop-Master-Knoten zum Test (das Jar liegt im Aufrufverzeichnis), Seite 83
+<3> Kontrolle Ausgabeverzeichnis
 
 
 == Start ==
@@ -67,9 +70,17 @@ firewall-cmd --reload
 
 == Ergebniskontrolle ==
 
-* link:http://192.168.1.122:8088/cluster/nodes[Hadoop Cluster]
-* link:http://192.168.1.122:8088/cluster/apps[Hadoop Jobfortschritt]
+* link:http://192.168.1.123:8088/cluster/nodes[Hadoop Cluster]
+* link:http://192.168.1.123:8088/cluster/apps[Hadoop Jobfortschritt]
+
+
+== Fazit ==
+
+Es funktionieren nur die JUnit-Tests. Der Aufruf als Web-Service oder REST-Endpoint geht nicht,
+da das Hadoop-Cluster nicht richtig initialisiert wird oder der Benutzer nicht stimmt.
 
 
 [[BigDataBuch]]
 BIG Data in der Praxis, ISBN 978-3-446-45396-8
+
+

@@ -1,6 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>de.ranlab.bigdata</groupId>
@@ -9,9 +11,10 @@
 		<relativePath>../00_BigData_Parent</relativePath>
 	</parent>
 	<groupId>03_g_MRJobStarter</groupId>
-	<artifactId>03_g_MRJobStarter</artifactId>
+	<artifactId>03_MRJobStarter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>war</packaging> 
+	<name>BigData: Hadoop API</name>
 
 	<dependencies>
 		<dependency>
@@ -43,7 +46,25 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-mapreduce-client-core</artifactId>
+		</dependency>
+
+		<!-- Fasterxml -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 		<!-- Junit 5 -->
@@ -74,16 +95,16 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<finalName>03_MRJobStarter</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<warSourceDirectory>WebContent</warSourceDirectory>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 
 					<resource>
-						<directory>WebContent</directory>
+						<directory>src/main/webapp</directory>
 					</resource>
 				</configuration>
 			</plugin>

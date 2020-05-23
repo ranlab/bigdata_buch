@@ -31,7 +31,7 @@ public class MapReduceIT {
         conf.set("yarn.resourcemanager.resource-tracker.address", de.jofre.helper.HadoopProperties.get("task_tracker_address"));
         conf.set("fs.defaultFS", de.jofre.helper.HadoopProperties.get("hdfs_address"));
         //
-        conf.set("mapreduce.framework.name", "yarn");
+        //  conf.set("mapreduce.framework.name", "yarn");
     }
 
     /**
@@ -136,9 +136,9 @@ public class MapReduceIT {
     private void debugConfig() {
         final java.util.TreeMap<java.lang.String, java.lang.String> treeConfig = new java.util.TreeMap<>();
         for (final java.util.Map.Entry<java.lang.String, java.lang.String> entry : conf) {
-            //           if (entry.getKey().contains("address") || entry.getKey().contains("name")) {
-            treeConfig.put(entry.getKey(), entry.getValue());
-            //         }
+            if (entry.getKey().contains("address") || entry.getKey().contains("mapreduce.framework.name")) {
+                treeConfig.put(entry.getKey(), entry.getValue());
+            }
         }
         for (final java.util.Map.Entry<java.lang.String, java.lang.String> entry : treeConfig.entrySet()) {
             log.info(java.lang.String.format("%s=%s", entry.getKey(), entry.getValue()));

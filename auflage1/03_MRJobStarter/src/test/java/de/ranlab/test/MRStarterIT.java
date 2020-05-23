@@ -14,7 +14,6 @@ public class MRStarterIT {
 
     @org.junit.jupiter.api.BeforeAll
     static void setup() {
-        log.info("@BeforeAll - executes once before all test methods in this class");
         mrstarter = new de.jofre.mrstarter.MRStarter();
     }
 
@@ -36,6 +35,7 @@ public class MRStarterIT {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.Order(2)
     public void tesst002_startJob() {
+        log.info("Jetzt gehts los.");
         mrstarter.startJob(null);
     }
 }

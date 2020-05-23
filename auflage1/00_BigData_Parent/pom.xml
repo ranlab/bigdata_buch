@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -20,7 +21,8 @@
 		<jakarta.jakartaee-api.version>8.0.0</jakarta.jakartaee-api.version>
 		<microprofile.version>3.3</microprofile.version>
 
-		<hadoop-client.version>3.2.1</hadoop-client.version>
+		<hadoop-client.version>2.10.0</hadoop-client.version>
+		<fasterxml.version>2.11.0</fasterxml.version>
 
 		<log4j.version>2.13.2</log4j.version>
 		<junit-jupiter.version>5.6.2</junit-jupiter.version>
@@ -66,8 +68,30 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-hdfs</artifactId>
+				<version>${hadoop-client.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-mapreduce-client-core</artifactId>
 				<version>${hadoop-client.version}</version>
+			</dependency>
+
+			<!-- Fasterxml -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${fasterxml.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${fasterxml.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${fasterxml.version}</version>
 			</dependency>
 
 			<!-- Junit 5 -->
@@ -129,6 +153,4 @@
 		<module>../02_MapReduceStudentData</module>
 		<module>../03_MRJobStarter</module>
 	</modules>
-
-
 </project>
